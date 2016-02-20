@@ -1,2 +1,2 @@
 all:
-	g++ -fopenmp -ggdb matAverager.cpp -o matavg
+	g++ -fopenmp matAverager.cpp -o matavg
