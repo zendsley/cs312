@@ -188,10 +188,11 @@ int main( int argc, char* argv[] )
 	
 	// tell omp how many threads to use
 	omp_set_num_threads( numThreads );
-	
-#pragma omp parallel
-	{
-	}
+
+//Shouldn't this be inside the stopwatch?	
+// #pragma omp parallel
+// 	{
+// 	}
 	
 	stopwatch S1;
 	S1.start();
@@ -265,36 +266,31 @@ int main( int argc, char* argv[] )
 	float max_avg=0;
 	unsigned int max_row=0;
 	unsigned int max_col=0;
-	// Realized that we did not need to do this part...
-	// unsigned int max_row_tie=0;
-	// unsigned int max_col_tie=0;
 
-	for( unsigned int i = 0; i < rows-2; i++ ) 
-	{
-	 	for( unsigned int j = 0; j < cols-2; j++ )
+
+	
+	#pragma omp parallel for
+		for( unsigned int i = 0; i < rows-2; i++ ) 
 		{
-			data_avg[i+1][j+1] = (data[i][j] + data[i][j+1] + data[i][j+2] 
-								+ data[i+1][j] + data[i+1][j+1] + data[i+1][j+2]
-			   					+ data[i+2][j] + data[i+2][j+1] + data[i+2][j+2])/9.0;
-
-			// cerr << "Avg calculated at: " << i+1 << "," << j+1 << " : " << data_avg[i+1][j+1] << endl;
-
-			if(data_avg[i+1][j+1] >= data_avg[max_row][max_col])
+		 	for( unsigned int j = 0; j < cols-2; j++ )
 			{
-				//realized that we did not need to keep track of duplicates...
-				// if(data_avg[i+1][j+1] == max_avg)
-				// {
-				// 	max_row_tie = max_row;
-				// 	max_col_tie = max_col;	
-				// }
+				data_avg[i+1][j+1] = (data[i][j] + data[i][j+1] + data[i][j+2] 
+									+ data[i+1][j] + data[i+1][j+1] + data[i+1][j+2]
+				   					+ data[i+2][j] + data[i+2][j+1] + data[i+2][j+2])/9.0;
 
-				max_avg=data_avg[i+1][j+1];
-				max_row=i+1;
-				max_col=j+1;
+				// cerr << "Avg calculated at: " << i+1 << "," << j+1 << " : " << data_avg[i+1][j+1] << endl;
+				
+				if(data_avg[i+1][j+1] >= data_avg[max_row][max_col])
+				{
+					
+					{
+					max_avg=data_avg[i+1][j+1];
+					max_row=i+1;
+					max_col=j+1;
+					}
+				}
 			}
-			//cerr << "max_avg=" << max_avg << " at (" << max_row << "," << max_col << ")" << endl << endl;
 		}
-	}
 	
 
 	// for( unsigned int i = 0; i < rows; i++ ) 
